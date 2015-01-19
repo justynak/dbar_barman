@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>bill_edition_window</class>
+ <widget class="QWidget" name="bill_edition_window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1085</width>
+    <height>759</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>10</y>
+     <width>401</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>24</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>EDYCJA RACHUNKÓW</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_logged_as">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>50</y>
+     <width>151</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Zalogowany jako:</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_new_bill">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>110</y>
+     <width>121</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Nowy rachunek</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_print_bill">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>580</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Drukuj paragon</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_scan_client_card">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>182</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Skanuj kartę</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_delete_bill">
+   <property name="geometry">
+    <rect>
+     <x>830</x>
+     <y>240</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Anuluj zamówienie</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_add_product">
+   <property name="geometry">
+    <rect>
+     <x>900</x>
+     <y>330</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>890</x>
+     <y>370</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Dodaj produkt</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_client_number">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>200</y>
+     <width>121</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Stały klient numer: </string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_bill_number">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>240</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Rachunek nr: </string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="product_list">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>290</y>
+     <width>721</width>
+     <height>431</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
