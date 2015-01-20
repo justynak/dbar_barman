@@ -7,6 +7,7 @@
 class bartender : public employee
 {
 public:
+    explicit bartender(QString p, QString n, QString s ) : employee(p,n,s) {}
     bartender();
     ~bartender();
 

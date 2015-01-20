@@ -25,7 +25,6 @@ logging_window::logging_window(QWidget *parent) :
 
      connect(ui->button_barman, &QPushButton::clicked, this, &logging_window::bartender_logged);
      connect(ui->button_waiter, &QPushButton::clicked, this, &logging_window::waiter_logged);
-
 }
 
 logging_window::~logging_window()

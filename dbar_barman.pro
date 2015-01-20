@@ -12,7 +12,7 @@ TARGET = dbar_barman
 TEMPLATE = app
 
 
-SOURCES += main.cpp \
+SOURCES += main.cpp\
     mainwindow.cpp \
     logging_window.cpp \
     bill_edition_window.cpp \
@@ -22,7 +22,11 @@ SOURCES += main.cpp \
     bartender.cpp \
     table.cpp \
     product.cpp \
-    employee.cpp
+    employee.cpp \
+    database_connector.cpp \
+    customer.cpp \
+    bill.cpp \
+    tables_window.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -34,11 +38,16 @@ HEADERS  += mainwindow.h \
     bartender.h \
     table.h \
     product.h \
-    employee.h
+    employee.h \
+    database_connector.h \
+    customer.h \
+    bill.h \
+    tables_window.h
 
 
 FORMS    += mainwindow.ui \
      logging_window.ui \
      bill_edition_window.ui \
      add_products_window.ui \
-     print_bill_window.ui
+     print_bill_window.ui \
+    tables_window.ui

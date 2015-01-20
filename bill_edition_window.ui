@@ -60,8 +60,8 @@
   <widget class="QPushButton" name="button_print_bill">
    <property name="geometry">
     <rect>
-     <x>830</x>
-     <y>580</y>
+     <x>870</x>
+     <y>670</y>
      <width>131</width>
      <height>51</height>
     </rect>
@@ -156,6 +156,29 @@
      <width>721</width>
      <height>431</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="box_bills">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>80</y>
+     <width>721</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_tables">
+   <property name="geometry">
+    <rect>
+     <x>870</x>
+     <y>570</y>
+     <width>131</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Zaznacz stoliki</string>
    </property>
   </widget>
  </widget>
