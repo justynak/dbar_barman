@@ -59,9 +59,10 @@ void MainWindow::set_tables_widget()
     this->setCentralWidget(t);
 }
 
-void MainWindow::set_print_bill_widget()
+void MainWindow::set_print_bill_widget(QString bill_selected)
 {
     p = new print_bill_window();
+    p->set_bill_number(bill_selected);
     connect(p, &print_bill_window::bill_closed, this, &MainWindow::set_bill_edition_widget_bartender);
     this->setCentralWidget(p);
 }

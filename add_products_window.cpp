@@ -35,11 +35,6 @@ void add_products_window::get_products(int highlighted)
     //from db
     QString cat = category_list[highlighted];
 
-    if(cat != "")
-    {
-        qDebug() << "haha";
-    }
-
     product_list.clear();
     product_list = db->get_products_by_category(cat);
 
@@ -55,11 +50,7 @@ void add_products_window::get_products(int highlighted)
 
 void add_products_window::set_product(int highlighted)
 {
-    //zapytanie sqlowe
-    QString name = ui->box_products->itemText(highlighted);
-    double price = 10.0; //z sql!
 
-    //prod = product(name, price, 0);
 }
 
 

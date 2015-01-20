@@ -39,11 +39,10 @@ class database_connector
        bool add_product(product p);
        bool change_number_of_products(product p, int n);
 
-       bool add_bill(bill b);
-       bool remove_bill(bill b);
+       bool add_bill(bill *b);
+       bool remove_bill(QString b);
 
        bool update_table(table t);
-
        bool connect();
 };
 

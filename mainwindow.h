@@ -36,7 +36,7 @@ public slots:
     void set_bill_edition_widget_waiter();
     void set_logging_widget();
     void set_tables_widget();
-    void set_print_bill_widget();
+    void set_print_bill_widget(QString bill_selected);
     void set_add_product_widget();
 };
 

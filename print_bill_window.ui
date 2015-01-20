@@ -16,8 +16,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>90</y>
+     <x>70</x>
+     <y>20</y>
      <width>251</width>
      <height>61</height>
     </rect>
@@ -29,14 +29,50 @@
   <widget class="QPushButton" name="button_ok">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>370</y>
+     <x>390</x>
+     <y>400</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
     <string>Ok</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="table_costs">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>120</y>
+     <width>321</width>
+     <height>261</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="button_discard">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>400</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Anuluj</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_bill_number">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>90</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Rachunek nr</string>
    </property>
   </widget>
  </widget>

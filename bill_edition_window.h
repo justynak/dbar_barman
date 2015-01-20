@@ -26,10 +26,12 @@ public:
 
 public slots:
     void manage_click(int, int);
+    void send_bill_print_signal();
+    void add_bill();
 
 signals:
     void goto_product_add();
-    void goto_bill_print();
+    void goto_bill_print(QString bill_selected);
     void goto_table_edition();
     void goto_bill_ediotion();
     void goto_logging();
@@ -37,7 +39,6 @@ signals:
 
 private slots:
     void update_product_list(QString index);
-
 
 private:
     Ui::bill_edition_window *ui;

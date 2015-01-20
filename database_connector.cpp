@@ -1,6 +1,6 @@
 #include "database_connector.h"
 #include <QObject>
-
+#include <QDate>
 
 void database_connector::init()
 {
@@ -87,7 +87,6 @@ QList<product> database_connector::get_products_from_bill(QString b)
     int whitespace = b.indexOf('\t');
     b = b.left(whitespace);
 
-
     QSqlQuery query;
     QString command = QObject::tr("select d_nazwa_artykulu, ilosc from d_zamowienie_artykul where d_numer_zamowienia =%1").arg(b);
     query.exec(command);
@@ -171,39 +170,43 @@ bool database_connector::change_number_of_products(product p, int n)
     return false;
 }
 
-bool database_connector::add_bill(bill b)
+bool database_connector::add_bill(bill *b)
 {
+    this->connect();
     QSqlQuery query;
-    QString command = QString("INSERT INTO d_zamowienie(d_numer_karty, 	d_kelner_PESEL, d_barman_PESEL, data_zamowienia)") +
-                      QString("VALUES('") + b.get_card_number() + QString("', ") +
-                      QString("VALUES('") + b.get_waiter() + QString("', ") +
-                      QString("VALUES('") + b.get_bartender() + QString("', ") +
-                      QString("VALUES('") + b.get_date();
+
+    QString command = QObject::tr("INSERT INTO d_zamowienie(d_numer_karty, d_kelner_PESEL, d_barman_PESEL, data_zamowienia) VALUES('%1', '%2', '%3', '%4'"
+                                  ")").arg(b->get_card_number()).arg(b->get_waiter()).arg(b->get_bartender()).arg(b->get_date());
 
     bool ok = query.exec(command);
+    query.finish();
 
     if(ok)
     {
-        command = QString("SELECT MAX(nr_zamowienia FROM d_zamowienie)");
+        command = QString("SELECT MAX(nr_zamowienia) FROM d_zamowienie");
         query.exec(command);
-        b.set_bill_number(query.value(0).toString());
+        query.first();
+        b->set_bill_number(query.value(0).toString());
     }
-
     return ok;
 }
 
-bool database_connector::remove_bill(bill b)
+bool database_connector::remove_bill(QString b)
 {
+    this->connect();
+
+    int whitespace = b.indexOf('\t');
+    b = b.left(whitespace);
+
     QSqlQuery query;
 
-    QString command = QString("DELETE FROM d_zamowienie WHERE nr_zamowienia = ") + b.get_bill_number();
+    QString command = QObject::tr("UPDATE d_zamowienie set zamkniety = 1 WHERE nr_zamowienia =%1").arg(b);
     return query.exec(command);
 }
 
 bool database_connector::update_table(table t)
 {
     QSqlQuery query;
-
     QString command = QObject::tr("UPDATE d_stolik SET zajetosc= %1 WHERE inumer_stolika = %2").arg(t.get_occupied()).arg(t.get_number());
     return query.exec(command);
 }
@@ -216,7 +219,6 @@ bool database_connector::connect()
     db.setDatabaseName("mydb");
     db.setUserName("bar");
     db.setPassword("kelner2015");
-
 
     if(db.open() == false)
     {

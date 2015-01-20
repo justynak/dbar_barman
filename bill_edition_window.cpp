@@ -1,6 +1,7 @@
 #include "bill_edition_window.h"
 #include "ui_bill_edition_window.h"
 #include <QtSql>
+#include <QDate>
 #include "tables_window.h"
 
 #define COL_PRODUCT     0
@@ -44,8 +45,9 @@ bill_edition_window::bill_edition_window(QWidget *parent) :
     connect(ui->product_list, &QTableWidget::cellClicked, this, &bill_edition_window::manage_click);
     connect(ui->button_add_product, &QPushButton::clicked, this, &bill_edition_window::goto_product_add);
     connect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::goto_table_edition);
-    connect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
+    connect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::send_bill_print_signal);
     connect(ui->button_logging, &QPushButton::clicked, this, &bill_edition_window::goto_logging);
+    connect(ui->button_new_bill,&QPushButton::clicked, this, &bill_edition_window::add_bill);
 
     connect(ui->box_bills, SIGNAL(highlighted(QString)), this, SLOT(update_product_list(QString)));
 
@@ -129,24 +131,7 @@ void bill_edition_window::add_product()
 
 void bill_edition_window::set_employee(bool waiter)
 {
-    /*
-    if(!initialized)
-    {
-        this->waiter = waiter;
 
-        if(this->waiter)
-        {
-            connect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::goto_table_edition);
-            disconnect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
-        }
-        else
-        {
-            connect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
-            disconnect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::goto_table_edition);
-        }
-        initialized = true;
-    }
-*/
 }
 
 void bill_edition_window::manage_click(int row, int col)
@@ -173,5 +158,29 @@ void bill_edition_window::manage_click(int row, int col)
             remove_product(row);
         break;
     }
+}
+
+void bill_edition_window::send_bill_print_signal()
+{
+    emit goto_bill_print(this->bill_selected);
+}
+
+void bill_edition_window::add_bill()
+{
+    QDate dat = QDate::currentDate();
+    QString d = dat.toString(Qt::ISODate);
+
+    bill b("", "", "8511273456", "87020586446", d);
+
+    db->add_bill(&b);
+
+    bill_selected = b.get_bill_number();
+    QString number = b.get_bill_number();
+    QString card = b.get_card_number();
+    QString date = b.get_date();
+    ui->box_bills->addItem(tr("%1\t%2\t%3").arg(number).arg(card).arg(date));
+    list_bills.append(b);
+    int size = list_bills.size();
+    ui->box_bills->setCurrentIndex(size -1);
 }
 

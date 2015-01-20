@@ -16,7 +16,12 @@ public:
     QString get_waiter(){ return waiter;}
     QString get_bartender(){return bartender;}
     QString get_date(){return date;}
+
     void set_bill_number(QString n){bill_number = n;}
+    void set_date(QString d){date = d;}
+    void set_waiter(QString w){waiter = w;}
+    void set_bartender(QString br){bartender = br;}
+    void set_card_number(QString c){card_number = c;}
 
 
 private:

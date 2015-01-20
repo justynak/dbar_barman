@@ -13,10 +13,24 @@ print_bill_window::print_bill_window(QWidget *parent) :
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
 
+    db = database_connector::get_instance();
+
+    connect(ui->button_ok, &QPushButton::clicked, this, &print_bill_window::on_button_ok_clicked);
     connect(ui->button_ok, &QPushButton::clicked, this, &print_bill_window::bill_closed);
 }
 
 print_bill_window::~print_bill_window()
 {
     delete ui;
+}
+
+void print_bill_window::on_button_ok_clicked()
+{
+    db->remove_bill(this->bill_number);
+    emit bill_closed();
+}
+
+void print_bill_window::on_button_discard_clicked()
+{
+
 }

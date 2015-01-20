@@ -9,6 +9,9 @@ class customer
 public:
     customer();
     ~customer();
+
+private:
+
 };
 
 #endif // CUSTOMER_H
