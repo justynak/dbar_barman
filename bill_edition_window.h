@@ -17,12 +17,12 @@ class bill_edition_window : public QWidget
     Q_OBJECT
 
 public:
-    explicit bill_edition_window(QWidget *parent = 0);
+    explicit bill_edition_window(waiter* w_p, bartender* b_r, employee* a_p , QWidget *parent = 0);
     ~bill_edition_window();
     void update_product_number(int product, int number);
     void remove_product(int p);
     void add_product();
-    void set_employee(bool waiter);
+    void set_employee(employee* e);
 
 public slots:
     void manage_click(int, int);
@@ -40,14 +40,18 @@ signals:
 private slots:
     void update_product_list(QString index);
 
+    void on_button_scan_client_card_clicked();
+
 private:
     Ui::bill_edition_window *ui;
-    employee emp;
-    bool waiter;
+    waiter* w;
+    bartender* br;
+    employee* active;
     QList<product> list_products;
     QList<bill> list_bills;
     QString bill_selected;
     database_connector *db;
+    double value;
 };
 
 #endif // BILL_EDITION_WINDOW_H

@@ -12,8 +12,9 @@
 #define COL_DELETE      5
 
 
-bill_edition_window::bill_edition_window(QWidget *parent) :
+bill_edition_window::bill_edition_window(waiter *w_p, bartender *b_r, employee* a_p ,  QWidget *parent) :
     QWidget(parent),
+    w(w_p), br(b_r), active(a_p),
     ui(new Ui::bill_edition_window)
 {
     ui->setupUi(this);
@@ -23,7 +24,6 @@ bill_edition_window::bill_edition_window(QWidget *parent) :
     Pal.setColor(QPalette::Background, QColor(100, 149, 237));
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
-
 
     ui->product_list->setRowCount(0);
     ui->product_list->setColumnCount(6);
@@ -54,8 +54,7 @@ bill_edition_window::bill_edition_window(QWidget *parent) :
 
     db = database_connector::get_instance();
 
-    list_bills = db->get_bills("87020586446", "8511273456");
-
+    list_bills = db->get_bills(br->get_pesel(), w->get_pesel());
 
     for(int i=0; i<list_bills.size(); ++i)
     {
@@ -64,6 +63,11 @@ bill_edition_window::bill_edition_window(QWidget *parent) :
         QString date = list_bills[i].get_date();
         ui->box_bills->addItem(tr("%1\t%2\t%3").arg(number).arg(card).arg(date));
     }
+
+    QString s;
+    if (active->is_waiter()) s = tr("Zalogowany jako: kelner %1 %2").arg(active->get_name()).arg(active->get_surname());
+    else s = tr("Zalogowany jako: barman %1 %2").arg(active->get_name()).arg(active->get_surname());
+    ui->label_logged_as->setText(s);
 }
 
 bill_edition_window::~bill_edition_window()
@@ -97,6 +101,16 @@ void bill_edition_window::update_product_list(QString index)
         for(unsigned int j=0; j<6; ++j)
             ui->product_list->setItem(i, j, item[j]);
     }
+
+    value = 0;
+
+    foreach(product p, list_products)
+        value += p.get_price() * p.get_number_of_products();
+
+    ui->label_value->setText(tr("%1").arg(value));
+
+    QString client = db->get_client(bill_selected);
+    ui->label_client_number->setText(tr("Stały klient nr: %1").arg(client));
 }
 
 void bill_edition_window::update_product_number(int product, int number)
@@ -120,8 +134,6 @@ void bill_edition_window::remove_product(int product)
     list_products.removeAt(product);
     ui->product_list->removeRow(product);
 
-    //update the db
-
 }
 
 void bill_edition_window::add_product()
@@ -129,9 +141,9 @@ void bill_edition_window::add_product()
 
 }
 
-void bill_edition_window::set_employee(bool waiter)
+void bill_edition_window::set_employee(employee *e)
 {
-
+    //this->emp = e;
 }
 
 void bill_edition_window::manage_click(int row, int col)
@@ -170,7 +182,7 @@ void bill_edition_window::add_bill()
     QDate dat = QDate::currentDate();
     QString d = dat.toString(Qt::ISODate);
 
-    bill b("", "", "8511273456", "87020586446", d);
+    bill b("", "", w->get_pesel(), br->get_pesel(), d);
 
     db->add_bill(&b);
 
@@ -184,3 +196,10 @@ void bill_edition_window::add_bill()
     ui->box_bills->setCurrentIndex(size -1);
 }
 
+
+void bill_edition_window::on_button_scan_client_card_clicked()
+{
+    db->set_random_client(bill_selected);
+    QString client = db->get_client(bill_selected);
+    ui->label_client_number->setText(tr("Stały klient numer: %1").arg(client));
+}

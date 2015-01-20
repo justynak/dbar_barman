@@ -14,7 +14,7 @@ add_products_window::add_products_window(QWidget *parent) :
     connect(ui->box_products, SIGNAL(highlighted(int)), this, SLOT(set_product(int)));
 
     connect(ui->button_add, &QPushButton::clicked, this, &add_products_window::on_button_add_clicked);
-    connect(ui->button_remove, &QPushButton::click, this, &add_products_window::on_button_remove_clicked);
+    connect(ui->button_remove, &QPushButton::clicked, this, &add_products_window::on_button_remove_clicked);
 
     connect(ui->button_approve, &QPushButton::clicked, this, &add_products_window::on_button_approve_clicked);
     connect(ui->button_discard, &QPushButton::clicked, this, &add_products_window::on_button_discard_clicked);
@@ -28,6 +28,11 @@ void add_products_window::get_categories()
 
     foreach(QString cat, category_list)
         ui->box_categories->addItem(cat);
+}
+
+void add_products_window::set_access_rights(employee *e)
+{
+
 }
 
 void add_products_window::get_products(int highlighted)
@@ -50,7 +55,8 @@ void add_products_window::get_products(int highlighted)
 
 void add_products_window::set_product(int highlighted)
 {
-
+    QString number = tr("%1").arg(product_list[highlighted].get_number_of_products());
+    ui->label_available->setText(tr("Dostępna liczba: %1").arg(number));
 }
 
 

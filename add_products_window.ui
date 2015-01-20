@@ -101,27 +101,27 @@
   <widget class="QLabel" name="label_number">
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>290</y>
-     <width>47</width>
-     <height>13</height>
+     <x>426</x>
+     <y>280</y>
+     <width>41</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
     <string>0</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="label_available">
    <property name="geometry">
     <rect>
-     <x>420</x>
+     <x>376</x>
      <y>250</y>
-     <width>47</width>
-     <height>13</height>
+     <width>121</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Liczba</string>
+    <string>Dostępna liczba: </string>
    </property>
   </widget>
  </widget>

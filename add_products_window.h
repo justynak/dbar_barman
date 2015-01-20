@@ -16,6 +16,7 @@ class add_products_window : public QWidget
 public:
     explicit add_products_window(QWidget *parent = 0);
     void get_categories();
+    void set_access_rights(employee* e);
     ~add_products_window();
 
 private slots:
@@ -27,11 +28,13 @@ private slots:
     void get_products(int highlighted);
     void set_product(int highlighted);
 
+
 private:
     Ui::add_products_window *ui;
     QList<QString> category_list;
     QList<product> product_list;
     database_connector* db;
+    //employee* e;
 
 signals:
     void return_to_bill_edition_window();

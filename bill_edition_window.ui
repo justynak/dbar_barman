@@ -36,7 +36,7 @@
     <rect>
      <x>40</x>
      <y>50</y>
-     <width>151</width>
+     <width>751</width>
      <height>16</height>
     </rect>
    </property>
@@ -125,8 +125,8 @@
   <widget class="QLabel" name="label_client_number">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>200</y>
+     <x>580</x>
+     <y>170</y>
      <width>121</width>
      <height>16</height>
     </rect>
@@ -139,7 +139,7 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>240</y>
+     <y>180</y>
      <width>81</width>
      <height>16</height>
     </rect>
@@ -152,9 +152,9 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>290</y>
+     <y>200</y>
      <width>701</width>
-     <height>341</height>
+     <height>301</height>
     </rect>
    </property>
   </widget>
@@ -184,14 +184,40 @@
   <widget class="QPushButton" name="button_logging">
    <property name="geometry">
     <rect>
-     <x>440</x>
-     <y>170</y>
-     <width>75</width>
-     <height>23</height>
+     <x>830</x>
+     <y>100</y>
+     <width>141</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
     <string>zaloguj</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>520</y>
+     <width>151</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Koszt zamówienia</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_value">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>530</y>
+     <width>47</width>
+     <height>13</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>0,00</string>
    </property>
   </widget>
  </widget>

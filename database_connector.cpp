@@ -66,7 +66,16 @@ QList<QString> database_connector::get_categories()
 QList<product> database_connector::get_products_by_category(QString category)
 {
     QSqlQuery query;
-    QString command = QString("select a.nazwa, cena_aktualna, ilosc from m_artykul as a join m_skladnik as s on a.nazwa = s.nazwa where kategoria = \"%1\"").arg(category);
+
+ //from m_artykul as a join m_artykul_skladnik as a_s on a.nazwa = a_s.m_Artykul_nazwa join m_skladnik as s on a_s.m_Artykul_nazwa = s.nazwa group by a.nazwa
+    QString command = QString("select a.nazwa, cena_aktualna, min(s.ilosc)"
+                              "from m_artykul as a "
+                              "join m_artykul_skladnik as a_s "
+                              "on a.nazwa = a_s.m_Artykul_nazwa "
+                              "join m_skladnik as s "
+                              "on a_s.m_Artykul_nazwa = s.nazwa "
+                              "where kategoria = \"%1\" "
+                              "group by a.nazwa ").arg(category);
     query.exec(command);
 
     QList<product> list;
@@ -118,7 +127,10 @@ QList<bill> database_connector::get_bills(QString b_pesel, QString w_pesel)
     qDebug() <<db.open();
 
     QSqlQuery query(db);
-    QString command = QString("select * from d_zamowienie where d_kelner_PESEL = 8511273456 AND d_barman_PESEL =87020586446 AND zamkniety = 0");
+    QString command = QObject::tr("select * from d_zamowienie "
+                                  "where d_kelner_PESEL = '%1' "
+                                  "AND d_barman_PESEL = '%2' "
+                                  "AND zamkniety = 0").arg(w_pesel).arg(b_pesel);
     query.exec(command);
 
     QList<bill> list;
@@ -158,6 +170,20 @@ QList<table> database_connector::get_tables()
         list.append(table(number, occupied));
     }
     return list;
+}
+
+QString database_connector::get_client(QString bill)
+{
+    this->connect();
+
+    int whitespace = bill.indexOf('\t');
+    bill = bill.left(whitespace);
+
+    QSqlQuery query(db);
+    query.exec(QObject::tr("select d_numer_karty from d_zamowienie where nr_zamowienia = '%1'").arg(bill));
+    query.first();
+
+    return query.value(0).toString();
 }
 
 bool database_connector::add_product(product p)
@@ -214,7 +240,6 @@ bool database_connector::update_table(table t)
 bool database_connector::connect()
 {
     //db = QSqlDatabase::addDatabase("QMYSQL");
-
     db.setHostName("localhost");
     db.setDatabaseName("mydb");
     db.setUserName("bar");
@@ -227,4 +252,86 @@ bool database_connector::connect()
     }
 
     return true;
+}
+
+bool database_connector::set_client(QString number, QString bill)
+{
+    this->connect();
+    QSqlQuery query;
+
+    int whitespace = bill.indexOf('\t');
+    bill = bill.left(whitespace);
+
+    /*
+UPDATE table_name
+SET column1=value1,column2=value2,...
+WHERE some_column=some_value;
+*/
+    return query.exec(QObject::tr("UPDATE d_zamowienie SET d_numer_karty = '%1 "
+                                  "WHERE nr_zamowienia = %2").arg(number).arg(bill));
+}
+
+bool database_connector::set_random_client(QString bill)
+{
+    this->connect();
+
+    int whitespace = bill.indexOf('\t');
+    bill = bill.left(whitespace);
+
+    QSqlQuery query;
+    query.exec(QObject::tr("SELECT COUNT(numer_karty) FROM d_staly_klient"));
+    query.first();
+    int number = query.value(0).toInt();
+    int limit = rand() % (number);
+    query.finish();
+
+    query.exec(QObject::tr("SELECT numer_karty from d_staly_klient limit 1 offset %1").arg(limit));
+    query.first();
+    QString numer = query.value(0).toString();
+    query.finish();
+
+    return query.exec(QObject::tr("UPDATE d_zamowienie SET d_numer_karty = '%1' "
+                                  "WHERE nr_zamowienia = '%2'").arg(numer).arg(bill));
+}
+
+waiter *database_connector::get_waiter()
+{
+    this->connect();
+    QSqlQuery query;
+    query.exec(QObject::tr("SELECT COUNT(pesel) FROM d_kelner"));
+    query.first();
+    int number = query.value(0).toInt();
+    int limit = rand() % (number);
+    query.finish();
+
+    query.exec(QObject::tr("SELECT pesel, imie, nazwisko from d_kelner limit 1 offset %1").arg(limit));
+    query.first();
+    QString pesel = query.value(0).toString();
+    QString name = query.value(1).toString();
+    QString surname = query.value(2).toString();
+
+    waiter *w = new waiter(pesel, name, surname);
+
+    return w;
+}
+
+bartender *database_connector::get_bartender()
+{
+    this->connect();
+    QSqlQuery query;
+    query.exec(QObject::tr("SELECT COUNT(pesel) FROM d_barman"));
+    query.first();
+    int number = query.value(0).toInt();
+    int limit = rand() % (number);
+    query.finish();
+
+    query.exec(QObject::tr("SELECT pesel, imie, nazwisko from d_barman limit 1 offset %1").arg(limit));
+    query.first();
+    QString pesel = query.value(0).toString();
+    QString name = query.value(1).toString();
+    QString surname = query.value(2).toString();
+
+    bartender *b = new bartender(pesel, name, surname);
+
+    return b;
 }

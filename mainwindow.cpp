@@ -8,7 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
             
-    database_connector* db = database_connector::get_instance();
+    w = NULL;
+    br = NULL;
+    active= NULL;
+
+    db = database_connector::get_instance();
     db->init();
 
     this->set_logging_widget();
@@ -22,11 +26,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::set_bill_edition_widget_bartender()
 {
-    b = new bill_edition_window();
+    if(br != NULL)
+        delete br;
+
+    br = db->get_bartender();
+    active = br;
+
+    if(w == NULL)
+        w = db->get_waiter();
+
+    b = new bill_edition_window(w, br, active);
 
     connect(b, &bill_edition_window::goto_bill_print, this, &MainWindow::set_print_bill_widget);
     connect(b, &bill_edition_window::goto_product_add, this, &MainWindow::set_add_product_widget);
-    //connect(b, &bill_edition_window::goto_table_edition, this, &MainWindow::set_tables_widget);
     connect(b, &bill_edition_window::goto_logging, this, &MainWindow::set_logging_widget);
 
     this->setCentralWidget(b);
@@ -35,9 +47,17 @@ void MainWindow::set_bill_edition_widget_bartender()
 
 void MainWindow::set_bill_edition_widget_waiter()
 {
-    b = new bill_edition_window();
+    if(w != NULL)
+        delete w;
 
-    //connect(b, &bill_edition_window::goto_bill_print, this, &MainWindow::set_print_bill_widget);
+    w = db->get_waiter();
+    active = w;
+
+    if(br == NULL)
+        br = db->get_bartender();
+
+    b = new bill_edition_window(w, br, active);
+
     connect(b, &bill_edition_window::goto_product_add, this, &MainWindow::set_add_product_widget);
     connect(b, &bill_edition_window::goto_table_edition, this, &MainWindow::set_tables_widget);
     connect(b, &bill_edition_window::goto_logging, this, &MainWindow::set_logging_widget);
@@ -61,8 +81,9 @@ void MainWindow::set_tables_widget()
 
 void MainWindow::set_print_bill_widget(QString bill_selected)
 {
-    p = new print_bill_window();
-    p->set_bill_number(bill_selected);
+    p = new print_bill_window(bill_selected);
+    bool is_waiter = active->is_waiter();
+
     connect(p, &print_bill_window::bill_closed, this, &MainWindow::set_bill_edition_widget_bartender);
     this->setCentralWidget(p);
 }
@@ -70,7 +91,12 @@ void MainWindow::set_print_bill_widget(QString bill_selected)
 void MainWindow::set_add_product_widget()
 {
     a = new add_products_window();
-    connect(a, &add_products_window::return_to_bill_edition_window, this, &MainWindow::set_bill_edition_widget_bartender);
+    bool is_waiter = active->is_waiter();
+    if(is_waiter)
+        connect(a, &add_products_window::return_to_bill_edition_window, this, &MainWindow::set_bill_edition_widget_waiter);
+    else
+        connect(a, &add_products_window::return_to_bill_edition_window, this, &MainWindow::set_bill_edition_widget_bartender);
+
     this->setCentralWidget(a);
 }
 

@@ -29,7 +29,10 @@ private:
     print_bill_window* p;
     tables_window* t;
     add_products_window* a;
-
+    waiter* w;
+    bartender* br;
+    employee* active;
+    database_connector* db;
 
 public slots:
     void set_bill_edition_widget_bartender();

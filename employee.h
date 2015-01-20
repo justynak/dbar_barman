@@ -8,6 +8,7 @@ public:
     employee(QString p, QString n, QString s ): pesel(p), name(n), surname(s){}
     employee(){}
     ~employee();
+    virtual bool is_waiter(){return false;}
 
     QString get_name(){return name;}
     QString get_surname(){return surname;}

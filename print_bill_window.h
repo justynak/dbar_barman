@@ -13,13 +13,13 @@ class print_bill_window : public QWidget
     Q_OBJECT
 
 public:
-    explicit print_bill_window(QWidget *parent = 0);
+    explicit print_bill_window(QWidget *parent = 0){}
+    explicit print_bill_window(QString b, QWidget *parent = 0);
     void set_bill_number(QString b){bill_number = b; }
     ~print_bill_window();
     
 signals:
     void bill_closed();
-
 
 private slots:
     void on_button_ok_clicked();
@@ -29,6 +29,8 @@ private:
     Ui::print_bill_window *ui;
     database_connector* db;
     QString bill_number;
+    double value;
+    QList<product> product_list;
 };
 
 #endif // PRINT_BILL_WINDOW_H

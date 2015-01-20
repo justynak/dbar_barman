@@ -35,6 +35,7 @@ class database_connector
        QList<product> get_products_from_bill(QString b);
        QList<bill> get_bills(QString b_pesel, QString w_pesel);
        QList<table> get_tables();
+       QString get_client(QString bill);
 
        bool add_product(product p);
        bool change_number_of_products(product p, int n);
@@ -44,6 +45,12 @@ class database_connector
 
        bool update_table(table t);
        bool connect();
+
+       bool set_client(QString number, QString bill);
+       bool set_random_client(QString bill);
+
+       waiter* get_waiter();
+       bartender* get_bartender();
 };
 
 #endif // DATABASE_CONNECTOR_H
