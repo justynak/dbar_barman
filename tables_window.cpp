@@ -19,6 +19,7 @@ tables_window::tables_window(QWidget *parent) :
 
     ui->list_tables->setHorizontalHeaderLabels(a);
 
+    list.clear();
     list = database->get_tables();
 
     for(int i=0; i<list.count(); ++i)
@@ -45,9 +46,7 @@ tables_window::tables_window(QWidget *parent) :
             ui->list_tables->setItem(i, j, item[j]);
     }
 
-    connect(ui->button_discard, &QPushButton::clicked, this, &tables_window::on_button_discard_clicked);
-    connect(ui->button_ok, &QPushButton::clicked, this, &tables_window::on_button_ok_clicked);
-    connect(ui->list_tables, &QTableWidget::cellClicked, this, &tables_window::on_list_tables_cellClicked);
+    connect(ui->button_ok, &QPushButton::clicked, this, &tables_window::tables_set);
 }
 
 void tables_window::update_tables()
@@ -89,16 +88,6 @@ tables_window::~tables_window()
 
 
 
-void tables_window::on_button_ok_clicked()
-{
-
-}
-
-void tables_window::on_button_discard_clicked()
-{
-
-}
-
 //stan
 void tables_window::on_list_tables_cellClicked(int row, int column)
 {
@@ -107,20 +96,27 @@ void tables_window::on_list_tables_cellClicked(int row, int column)
         case 0: break;
         case 1: break;
         case 2:
-            //send to db
-            bool now_occupied = true;
-            if(ui->list_tables->item(row, column)->text() == "X")
+            update_table(&list[row]);
+
+            if(list[row].get_occupied())
             {
-                ui->list_tables->item(row, column)->setText("");
-                now_occupied = false;
+                ui->list_tables->item(row, 1)->setText("Zajety");
+                ui->list_tables->item(row, 2)->setText("X");
             }
             else
-                ui->list_tables->item(row, column)->setText("X");
-
-            list[row].set_occupied(now_occupied);
-            database->update_table(list[row]);
-
+            {
+                ui->list_tables->item(row, 1)->setText("Wolny");
+                ui->list_tables->item(row, 2)->setText("");
+            }
         break;
     }
 
+}
+
+bool tables_window::update_table(table* t)
+{
+    bool occupied = t->get_occupied();
+    t->set_occupied(!occupied);
+
+    return database->update_table(*t);
 }

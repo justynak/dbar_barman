@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "product.h"
+#include "database_connector.h"
 
 namespace Ui {
 class add_products_window;
@@ -25,15 +26,14 @@ private slots:
 
     void get_products(int highlighted);
     void set_product(int highlighted);
-    void send_chosen_product();
 
 private:
     Ui::add_products_window *ui;
-    product prod;
+    QList<QString> category_list;
+    QList<product> product_list;
+    database_connector* db;
 
 signals:
-    void new_product(product p);
-    void on_product_chosen(product p);
     void return_to_bill_edition_window();
 };
 

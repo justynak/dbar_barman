@@ -12,6 +12,8 @@ print_bill_window::print_bill_window(QWidget *parent) :
     Pal.setColor(QPalette::Background, QColor(100, 149, 237));
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
+
+    connect(ui->button_ok, &QPushButton::clicked, this, &print_bill_window::bill_closed);
 }
 
 print_bill_window::~print_bill_window()

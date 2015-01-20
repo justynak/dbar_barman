@@ -4,26 +4,15 @@
 
 void database_connector::init()
 {
-    db = QSqlDatabase::addDatabase("QMYSQL");
 
-    db.setHostName("localhost");
-    db.setDatabaseName("mydb");
-    db.setUserName("bar");
-    db.setPassword("kelner2015");
-
-
-    if(db.open() == false)
-    {
-       QSqlError err = db.lastError();
-       QMessageBox::information(0, QObject::tr("Błąd"), err.text());
-    }
 }
 
 QList<waiter> database_connector::get_waiters()
 {
     QSqlQuery query;
-    QString command = QString("SELECT pesel, imie, nazwisko FROM d_kelner");
-    query.exec(command);
+    //QString command = QString("SELECT pesel, imie, nazwisko FROM d_kelner");
+    //query.exec(command);
+    query.exec("SELECT pesel, imie, nazwisko FROM d_kelner");
 
     QList<waiter> list;
 
@@ -62,7 +51,7 @@ QList<bartender> database_connector::get_bartenders()
 QList<QString> database_connector::get_categories()
 {
     QSqlQuery query;
-    QString command = QString("select kategoria from m_artykul");
+    QString command = QString("select distinct kategoria from m_artykul order by kategoria");
     query.exec(command);
 
     QList<QString> list;
@@ -77,7 +66,7 @@ QList<QString> database_connector::get_categories()
 QList<product> database_connector::get_products_by_category(QString category)
 {
     QSqlQuery query;
-    QString command = QString("select nazwa, cena_aktualna, ilosc from m_artykul as a join m_skladnik as s on a.nazwa = s.nazwa");
+    QString command = QString("select a.nazwa, cena_aktualna, ilosc from m_artykul as a join m_skladnik as s on a.nazwa = s.nazwa where kategoria = \"%1\"").arg(category);
     query.exec(command);
 
     QList<product> list;
@@ -92,11 +81,45 @@ QList<product> database_connector::get_products_by_category(QString category)
     return list;
 }
 
+QList<product> database_connector::get_products_from_bill(QString b)
+{
+    this->connect();
+    int whitespace = b.indexOf('\t');
+    b = b.left(whitespace);
+
+
+    QSqlQuery query;
+    QString command = QObject::tr("select d_nazwa_artykulu, ilosc from d_zamowienie_artykul where d_numer_zamowienia =%1").arg(b);
+    query.exec(command);
+    QList<product> list;
+
+    while (query.next())
+    {
+        QString name = query.value(0).toString();
+        int number = query.value(1).toInt();
+
+        this->connect();
+        QSqlQuery q;
+        q.exec(QObject::tr("select cena_aktualna from m_artykul where nazwa = \"%1\" ").arg(name));
+        q.first();
+        double price = q.value(0).toDouble();
+        q.finish();
+
+        list.append(product(name, price, number));
+    }
+    return list;
+}
+
 QList<bill> database_connector::get_bills(QString b_pesel, QString w_pesel)
 {
-    QSqlQuery query;
-    QString command = QString("select nr_zamowienia, d_numer_karty, data_zamowienia from d_zamowienie where d_kelner_PESEL = ")
-                                + w_pesel + QString("AND d_barman_PESEL =") +  b_pesel;
+    db.setHostName("localhost");
+    db.setDatabaseName("mydb");
+    db.setUserName("bar");
+    db.setPassword("kelner2015");
+    qDebug() <<db.open();
+
+    QSqlQuery query(db);
+    QString command = QString("select * from d_zamowienie where d_kelner_PESEL = 8511273456 AND d_barman_PESEL =87020586446 AND zamkniety = 0");
     query.exec(command);
 
     QList<bill> list;
@@ -111,7 +134,7 @@ QList<bill> database_connector::get_bills(QString b_pesel, QString w_pesel)
     {
         QString bill_number = query.value(0).toString();
         QString card_number = query.value(1).toString();
-        QString date = query.value(3).toString();
+        QString date = query.value(4).toString();
 
         list.append(bill(bill_number, card_number, w_pesel, b_pesel, date));
     }
@@ -120,9 +143,11 @@ QList<bill> database_connector::get_bills(QString b_pesel, QString w_pesel)
 
 QList<table> database_connector::get_tables()
 {
-    QSqlQuery query;
-    QString command = QString("select inumer_stolika, zajetosc from d_stolik");
-    query.exec(command);
+    this->connect();
+
+    QSqlQuery query(db);
+    //QString command = QString("select inumer_stolika, zajetosc from d_stolik;");
+    query.exec("select inumer_stolika, zajetosc from d_stolik;");
 
     QList<table> list;
 
@@ -181,4 +206,23 @@ bool database_connector::update_table(table t)
 
     QString command = QObject::tr("UPDATE d_stolik SET zajetosc= %1 WHERE inumer_stolika = %2").arg(t.get_occupied()).arg(t.get_number());
     return query.exec(command);
+}
+
+bool database_connector::connect()
+{
+    //db = QSqlDatabase::addDatabase("QMYSQL");
+
+    db.setHostName("localhost");
+    db.setDatabaseName("mydb");
+    db.setUserName("bar");
+    db.setPassword("kelner2015");
+
+
+    if(db.open() == false)
+    {
+       QSqlError err = db.lastError();
+       QMessageBox::information(0, QObject::tr("Błąd"), err.text());
+    }
+
+    return true;
 }

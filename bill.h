@@ -25,7 +25,6 @@ private:
     QString waiter;
     QString bartender;
     QString date;
-
 };
 
 #endif // BILL_H

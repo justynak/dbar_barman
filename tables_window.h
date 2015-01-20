@@ -19,10 +19,12 @@ public:
     ~tables_window();
 
 private slots:
-    void on_button_ok_clicked();
-    void on_button_discard_clicked();
     void on_list_tables_cellClicked(int row, int column);
+    bool update_table(table* t);
 
+signals:
+    void tables_set();
+    
 private:
     Ui::tables_window *ui;
     database_connector* database;

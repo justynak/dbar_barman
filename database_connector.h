@@ -13,7 +13,7 @@
 class database_connector
 {
  private:
-       database_connector() {}
+       database_connector() { db = QSqlDatabase::addDatabase("QMYSQL"); }
        database_connector(const database_connector &);
        database_connector& operator=(const database_connector&);
        ~database_connector() {}
@@ -32,6 +32,7 @@ class database_connector
        QList<bartender> get_bartenders();
        QList<QString> get_categories();
        QList<product> get_products_by_category(QString category);
+       QList<product> get_products_from_bill(QString b);
        QList<bill> get_bills(QString b_pesel, QString w_pesel);
        QList<table> get_tables();
 
@@ -42,6 +43,8 @@ class database_connector
        bool remove_bill(bill b);
 
        bool update_table(table t);
+
+       bool connect();
 };
 
 #endif // DATABASE_CONNECTOR_H

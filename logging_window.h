@@ -2,8 +2,8 @@
 #define LOGGING_WINDOW_H
 
 #include <QWidget>
-
-
+#include "database_connector.h"
+#include "bill.h"
 
 namespace Ui {
 class logging_window;
@@ -19,6 +19,7 @@ public:
 
 private:
     Ui::logging_window *ui;
+    database_connector *db;
 
 signals:
     void waiter_logged();

@@ -7,9 +7,9 @@ add_products_window::add_products_window(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    db = database_connector::get_instance();
     get_categories();
 
-    //connect(ui->box_categories, &QComboBox::highlighted, this, &add_products_window::get_products);
     connect(ui->box_categories, SIGNAL(highlighted(int)), this, SLOT(get_products(int)));
     connect(ui->box_products, SIGNAL(highlighted(int)), this, SLOT(set_product(int)));
 
@@ -22,55 +22,46 @@ add_products_window::add_products_window(QWidget *parent) :
 
 void add_products_window::get_categories()
 {
-    //from db
-    ui->box_categories->addItem(tr("drinki"));
-    ui->box_categories->addItem(tr("piwa butelkowane"));
+    category_list.clear();
+    category_list = db->get_categories();
+    ui->box_categories->clear();
+
+    foreach(QString cat, category_list)
+        ui->box_categories->addItem(cat);
 }
 
 void add_products_window::get_products(int highlighted)
 {
     //from db
+    QString cat = category_list[highlighted];
+
+    if(cat != "")
+    {
+        qDebug() << "haha";
+    }
+
+    product_list.clear();
+    product_list = db->get_products_by_category(cat);
 
     //delete the products from combobox
     ui->box_products->clear();
 
-    //get category
-    QString category = ui->box_categories->itemText(highlighted);
-
     //print products from selected category from db
-
-    //for now:
-    if (category == "drinki")
+    foreach(product p, product_list)
     {
-        ui->box_products->addItem(tr("Mojito"));
-        ui->box_products->addItem(tr("Tequila Sunrise"));
-        ui->box_products->addItem(tr("Martini Dry"));
+        ui->box_products->addItem(tr("%1").arg(p.get_name()));
     }
-
-    else
-    {
-        ui->box_products->addItem(tr("Budweiser 0,5"));
-        ui->box_products->addItem(tr("Lech 0,5"));
-        ui->box_products->addItem(tr("Bojan 0,5"));
-    }
-
 }
 
 void add_products_window::set_product(int highlighted)
 {
     //zapytanie sqlowe
-
-    //
     QString name = ui->box_products->itemText(highlighted);
     double price = 10.0; //z sql!
 
-    prod = product(name, price, 0);
+    //prod = product(name, price, 0);
 }
 
-void add_products_window::send_chosen_product()
-{
-    emit on_product_chosen(prod);
-}
 
 add_products_window::~add_products_window()
 {
@@ -81,23 +72,23 @@ add_products_window::~add_products_window()
 void add_products_window::on_button_approve_clicked()
 {
     //update db
-    emit on_product_chosen(prod);
+   // emit on_product_chosen(prod);
 }
 
 void add_products_window::on_button_add_clicked()
 {
-    int current_number = prod.get_number_of_products() + 1;
-    prod.set_number_of_products(current_number);
-    ui->label_number->setText(tr("%1").arg(current_number));
+   // int current_number = prod.get_number_of_products() + 1;
+   // prod.set_number_of_products(current_number);
+   // ui->label_number->setText(tr("%1").arg(current_number));
 
     //+ zapytanie sql
 }
 
 void add_products_window::on_button_remove_clicked()
 {
-    int current_number = prod.get_number_of_products() - 1;
-    prod.set_number_of_products(current_number);
-    ui->label_number->setText(tr("%1").arg(current_number));
+   // int current_number = prod.get_number_of_products() - 1;
+   // prod.set_number_of_products(current_number);
+    //ui->label_number->setText(tr("%1").arg(current_number));
 
     //+ zapytanie sql
 }

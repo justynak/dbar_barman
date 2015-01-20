@@ -14,6 +14,9 @@ class print_bill_window : public QWidget
 public:
     explicit print_bill_window(QWidget *parent = 0);
     ~print_bill_window();
+    
+signals:
+    void bill_closed();
 
 private:
     Ui::print_bill_window *ui;

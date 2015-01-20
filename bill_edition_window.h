@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "employee.h"
 #include "product.h"
+#include "bill.h"
+#include "database_connector.h"
 
 
 namespace Ui {
@@ -17,7 +19,6 @@ class bill_edition_window : public QWidget
 public:
     explicit bill_edition_window(QWidget *parent = 0);
     ~bill_edition_window();
-    void update_product_list();
     void update_product_number(int product, int number);
     void remove_product(int p);
     void add_product();
@@ -29,15 +30,23 @@ public slots:
 signals:
     void goto_product_add();
     void goto_bill_print();
+    void goto_table_edition();
+    void goto_bill_ediotion();
+    void goto_logging();
+
 
 private slots:
-    void on_button_tables_clicked();
+    void update_product_list(QString index);
+
 
 private:
     Ui::bill_edition_window *ui;
     employee emp;
     bool waiter;
     QList<product> list_products;
+    QList<bill> list_bills;
+    QString bill_selected;
+    database_connector *db;
 };
 
 #endif // BILL_EDITION_WINDOW_H

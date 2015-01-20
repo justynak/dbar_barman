@@ -27,10 +27,8 @@ bill_edition_window::bill_edition_window(QWidget *parent) :
     ui->product_list->setRowCount(0);
     ui->product_list->setColumnCount(6);
     ui->product_list->setColumnWidth(COL_PRODUCT, 300);
-
     ui->product_list->setColumnWidth(COL_ADD_ONE, 40);
     ui->product_list->setColumnWidth(COL_REMOVE_ONE, 40);
-
     ui->product_list->setColumnWidth(COL_DELETE, 60);
 
     QStringList a;
@@ -45,19 +43,25 @@ bill_edition_window::bill_edition_window(QWidget *parent) :
 
     connect(ui->product_list, &QTableWidget::cellClicked, this, &bill_edition_window::manage_click);
     connect(ui->button_add_product, &QPushButton::clicked, this, &bill_edition_window::goto_product_add);
+    connect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::goto_table_edition);
+    connect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
+    connect(ui->button_logging, &QPushButton::clicked, this, &bill_edition_window::goto_logging);
 
-    if(!(this->waiter))
-        connect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
-    else
-        connect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::on_button_tables_clicked);
+    connect(ui->box_bills, SIGNAL(highlighted(QString)), this, SLOT(update_product_list(QString)));
 
 
-    update_product_list();
+    db = database_connector::get_instance();
 
-    QSqlQuery query;
-    query.exec("SELECT pesel FROM `d_kelner`");
+    list_bills = db->get_bills("87020586446", "8511273456");
 
-    ui->label_logged_as->setText(query.value(0).toString());
+
+    for(int i=0; i<list_bills.size(); ++i)
+    {
+        QString number = list_bills[i].get_bill_number();
+        QString card = list_bills[i].get_card_number();
+        QString date = list_bills[i].get_date();
+        ui->box_bills->addItem(tr("%1\t%2\t%3").arg(number).arg(card).arg(date));
+    }
 }
 
 bill_edition_window::~bill_edition_window()
@@ -65,14 +69,14 @@ bill_edition_window::~bill_edition_window()
     delete ui;
 }
 
-void bill_edition_window::update_product_list()
+void bill_edition_window::update_product_list(QString index)
 {
-    //get all products from database and display
-    list_products.append(product(tr("Żywiec"), 10.0, 29));
-    list_products.append(product(tr("Wódka shot"), 6.0, 5));
-    list_products.append(product(tr("Herbata"), 7.5, 1));
-    list_products.append(product(tr("Piwo z sokiem"), 13, 3));
-    list_products.append(product(tr("Woda gazowana"), 6, 1));
+    bill_selected = index;
+    list_products.clear();
+    list_products = db->get_products_from_bill(index);
+    ui->product_list->clear();
+    ui->product_list->setRowCount(0);
+
 
     for(int i=0; i<list_products.count(); ++i)
     {
@@ -125,7 +129,24 @@ void bill_edition_window::add_product()
 
 void bill_edition_window::set_employee(bool waiter)
 {
-    this->waiter = waiter;
+    /*
+    if(!initialized)
+    {
+        this->waiter = waiter;
+
+        if(this->waiter)
+        {
+            connect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::goto_table_edition);
+            disconnect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
+        }
+        else
+        {
+            connect(ui->button_print_bill, &QPushButton::clicked, this, &bill_edition_window::goto_bill_print);
+            disconnect(ui->button_tables, &QPushButton::clicked, this, &bill_edition_window::goto_table_edition);
+        }
+        initialized = true;
+    }
+*/
 }
 
 void bill_edition_window::manage_click(int row, int col)
@@ -142,7 +163,7 @@ void bill_edition_window::manage_click(int row, int col)
 
         case COL_REMOVE_ONE:
             //usun o jeden
-                update_product_number(row, -1);
+            update_product_number(row, -1);
         break;
 
         //case COL_PRICE: break;
@@ -154,6 +175,3 @@ void bill_edition_window::manage_click(int row, int col)
     }
 }
 
-void bill_edition_window::on_button_tables_clicked()
-{
-}
