@@ -22,15 +22,15 @@ public:
     void update_product_number(int product, int number);
     void remove_product(int p);
     void add_product();
-    void set_employee(employee* e);
 
 public slots:
     void manage_click(int, int);
     void send_bill_print_signal();
     void add_bill();
+    void add_product_slot();
 
 signals:
-    void goto_product_add();
+    void goto_product_add(QString bill_selected);
     void goto_bill_print(QString bill_selected);
     void goto_table_edition();
     void goto_bill_ediotion();
@@ -41,6 +41,8 @@ private slots:
     void update_product_list(QString index);
 
     void on_button_scan_client_card_clicked();
+
+    void on_button_delete_bill_clicked();
 
 private:
     Ui::bill_edition_window *ui;

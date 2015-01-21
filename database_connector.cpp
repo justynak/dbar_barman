@@ -51,7 +51,7 @@ QList<bartender> database_connector::get_bartenders()
 QList<QString> database_connector::get_categories()
 {
     QSqlQuery query;
-    QString command = QString("select distinct kategoria from m_artykul order by kategoria");
+    QString command = QString("select distinct kategoria from m_artykul");
     query.exec(command);
 
     QList<QString> list;
@@ -65,6 +65,7 @@ QList<QString> database_connector::get_categories()
 
 QList<product> database_connector::get_products_by_category(QString category)
 {
+    this->connect();
     QSqlQuery query;
 
  //from m_artykul as a join m_artykul_skladnik as a_s on a.nazwa = a_s.m_Artykul_nazwa join m_skladnik as s on a_s.m_Artykul_nazwa = s.nazwa group by a.nazwa
@@ -97,7 +98,9 @@ QList<product> database_connector::get_products_from_bill(QString b)
     b = b.left(whitespace);
 
     QSqlQuery query;
-    QString command = QObject::tr("select d_nazwa_artykulu, ilosc from d_zamowienie_artykul where d_numer_zamowienia =%1").arg(b);
+    QString command = QObject::tr("select d_nazwa_artykulu, ilosc "
+                                  "from d_zamowienie_artykul "
+                                  "where d_numer_zamowienia =%1").arg(b);
     query.exec(command);
     QList<product> list;
 
@@ -186,14 +189,83 @@ QString database_connector::get_client(QString bill)
     return query.value(0).toString();
 }
 
-bool database_connector::add_product(product p)
+bool database_connector::add_product(product p, QString bill_number)
 {
-    return false;
+    int whitespace = bill_number.indexOf('\t');
+    bill_number = bill_number.left(whitespace);
+
+    this->connect();
+    QSqlQuery query(db);
+    QString command = QObject::tr("insert into `d_zamowienie_artykul` (`d_numer_zamowienia`, `d_nazwa_artykulu`, `ilosc`)"
+                                  "values ( '%1', '%2' ,'%3')").arg(bill_number).arg(p.get_name()).arg(p.get_number_of_products());
+    query.exec(command);
+    query.finish();
+
+    command = QObject::tr("update `m_skladnik` set `ilosc` = `ilosc` - %1 "
+                 "where `nazwa` in "
+                 "(select `m_Skladnik_nazwa` from `m_artykul_skladnik` "
+                 "where `m_Artykul_nazwa` = \"%2\" )").arg(p.get_number_of_products()).arg(p.get_name());
+    query.exec(command);
+    return true;
 }
 
-bool database_connector::change_number_of_products(product p, int n)
+bool database_connector::remove_product(product p, QString bill_number)
 {
-    return false;
+    int whitespace = bill_number.indexOf('\t');
+    bill_number = bill_number.left(whitespace);
+
+    this->connect();
+    QSqlQuery query(db);
+    QString command = QObject::tr("delete from`d_zamowienie_artykul` "
+                                  "where `d_numer_zamowienia` = '%1' "
+                                  "and `d_nazwa_artykulu` = '%2' "
+                                  "and `ilosc` = '%3'").arg(bill_number).arg(p.get_name()).arg(p.get_number_of_products());
+    query.exec(command);
+    query.finish();
+
+    command = QObject::tr("update `m_skladnik` set `ilosc` = `ilosc` + %1 "
+                 "where `nazwa` in "
+                 "(select `m_Skladnik_nazwa` from `m_artykul_skladnik` "
+                 "where `m_Artykul_nazwa` = \"%2\" )").arg(p.get_number_of_products()).arg(p.get_name());
+    query.exec(command);
+    return true;
+}
+
+bool database_connector::change_number_of_products(product* p, QString bill_number, int n)
+{
+    int available;
+
+    this->connect();
+    QSqlQuery query(db);
+
+    int whitespace = bill_number.indexOf('\t');
+    bill_number = bill_number.left(whitespace);
+
+    QString command_n = QString("select min(s.ilosc)"
+                              "from m_artykul as a "
+                              "join m_artykul_skladnik as a_s "
+                              "on a.nazwa = a_s.m_Artykul_nazwa "
+                              "join m_skladnik as s "
+                              "on a_s.m_Artykul_nazwa = s.nazwa "
+                              "where a_s.m_Artykul_nazwa = \"%1\" ").arg(p->get_name());
+
+    query.exec(command_n);
+    query.first();
+    available = query.value(0).toInt();
+
+    if(available >= n)
+    {
+
+        QString command = QObject::tr("update `m_skladnik` set `ilosc` = `ilosc` - %1 "
+                     "where `nazwa` in "
+                     "(select `m_Skladnik_nazwa` from `m_artykul_skladnik` "
+                     "where `m_Artykul_nazwa` = \"%2\" )").arg(n).arg(p->get_name());
+
+        if(query.exec(command)) p->set_number_of_products(n);
+        return true;
+    }
+
+    else return false;
 }
 
 bool database_connector::add_bill(bill *b)
@@ -225,8 +297,11 @@ bool database_connector::remove_bill(QString b)
     b = b.left(whitespace);
 
     QSqlQuery query;
+    QString command = QObject::tr("delete from `d_zamowienie_artykul` where d_numer_zamowienia =%1").arg(b);
+    query.exec(command);
+    query.finish();
 
-    QString command = QObject::tr("UPDATE d_zamowienie set zamkniety = 1 WHERE nr_zamowienia =%1").arg(b);
+    command = QObject::tr("delete from `d_zamowienie` where nr_zamowienia =%1").arg(b);
     return query.exec(command);
 }
 

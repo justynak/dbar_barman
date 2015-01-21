@@ -37,8 +37,9 @@ class database_connector
        QList<table> get_tables();
        QString get_client(QString bill);
 
-       bool add_product(product p);
-       bool change_number_of_products(product p, int n);
+       bool add_product(product p, QString bill_number);
+       bool remove_product(product p, QString bill_number);
+       bool change_number_of_products(product* p, QString bill_number, int n);
 
        bool add_bill(bill *b);
        bool remove_bill(QString b);

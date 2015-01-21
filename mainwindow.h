@@ -40,7 +40,7 @@ public slots:
     void set_logging_widget();
     void set_tables_widget();
     void set_print_bill_widget(QString bill_selected);
-    void set_add_product_widget();
+    void set_add_product_widget(QString bill_selected);
 };
 
 #endif // MAINWINDOW_H

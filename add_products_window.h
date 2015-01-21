@@ -14,7 +14,7 @@ class add_products_window : public QWidget
     Q_OBJECT
 
 public:
-    explicit add_products_window(QWidget *parent = 0);
+    explicit add_products_window(QString bill, QWidget *parent = 0);
     void get_categories();
     void set_access_rights(employee* e);
     ~add_products_window();
@@ -33,8 +33,11 @@ private:
     Ui::add_products_window *ui;
     QList<QString> category_list;
     QList<product> product_list;
+    int number_of_current_product;
+    int chosed_product;
+    int max_number_of_current_product;
     database_connector* db;
-    //employee* e;
+    QString bill_selected;
 
 signals:
     void return_to_bill_edition_window();

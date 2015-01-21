@@ -1,8 +1,8 @@
 #include "add_products_window.h"
 #include "ui_add_products_window.h"
 
-add_products_window::add_products_window(QWidget *parent) :
-    QWidget(parent),
+add_products_window::add_products_window(QString bill, QWidget *parent) :
+    QWidget(parent), bill_selected(bill),
     ui(new Ui::add_products_window)
 {
     ui->setupUi(this);
@@ -10,13 +10,18 @@ add_products_window::add_products_window(QWidget *parent) :
     db = database_connector::get_instance();
     get_categories();
 
+    number_of_current_product = 0;
+    max_number_of_current_product = 0;
+    chosed_product= 0;
+    ui->label_number->setText(tr("%1").arg(number_of_current_product));
+
     connect(ui->box_categories, SIGNAL(highlighted(int)), this, SLOT(get_products(int)));
     connect(ui->box_products, SIGNAL(highlighted(int)), this, SLOT(set_product(int)));
 
-    connect(ui->button_add, &QPushButton::clicked, this, &add_products_window::on_button_add_clicked);
+    //connect(ui->button_add, &QPushButton::clicked, this, &add_products_window::on_button_add_clicked);
     connect(ui->button_remove, &QPushButton::clicked, this, &add_products_window::on_button_remove_clicked);
 
-    connect(ui->button_approve, &QPushButton::clicked, this, &add_products_window::on_button_approve_clicked);
+    //connect(ui->button_approve, &QPushButton::clicked, this, &add_products_window::on_button_approve_clicked);
     connect(ui->button_discard, &QPushButton::clicked, this, &add_products_window::on_button_discard_clicked);
 }
 
@@ -55,8 +60,9 @@ void add_products_window::get_products(int highlighted)
 
 void add_products_window::set_product(int highlighted)
 {
-    QString number = tr("%1").arg(product_list[highlighted].get_number_of_products());
-    ui->label_available->setText(tr("Dostępna liczba: %1").arg(number));
+    chosed_product = highlighted;
+    max_number_of_current_product = product_list[highlighted].get_number_of_products();
+    ui->label_available->setText(tr("Dostępna liczba: %1").arg(max_number_of_current_product));
 }
 
 
@@ -69,25 +75,29 @@ add_products_window::~add_products_window()
 void add_products_window::on_button_approve_clicked()
 {
     //update db
-   // emit on_product_chosen(prod);
+    product p = product_list[chosed_product];
+    p.set_number_of_products(number_of_current_product);
+    db->add_product(p, bill_selected);
+    ui->label_number->setText(tr("%1").arg(number_of_current_product));
+
+    emit return_to_bill_edition_window();
 }
 
 void add_products_window::on_button_add_clicked()
 {
-   // int current_number = prod.get_number_of_products() + 1;
-   // prod.set_number_of_products(current_number);
-   // ui->label_number->setText(tr("%1").arg(current_number));
+    number_of_current_product +=1;
+    if(number_of_current_product > max_number_of_current_product)
+        number_of_current_product = max_number_of_current_product;
 
-    //+ zapytanie sql
+    ui->label_number->setText(tr("%1").arg(number_of_current_product));
 }
 
 void add_products_window::on_button_remove_clicked()
 {
-   // int current_number = prod.get_number_of_products() - 1;
-   // prod.set_number_of_products(current_number);
-    //ui->label_number->setText(tr("%1").arg(current_number));
-
-    //+ zapytanie sql
+    number_of_current_product -=1;
+    if(number_of_current_product < 0)
+        number_of_current_product = 0;
+    ui->label_number->setText(tr("%1").arg(number_of_current_product));
 }
 
 void add_products_window::on_button_discard_clicked()
