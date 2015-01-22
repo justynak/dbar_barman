@@ -10,6 +10,36 @@ add_products_window::add_products_window(QString bill, QWidget *parent) :
     db = database_connector::get_instance();
     get_categories();
 
+
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background, QColor(100, 149, 237));
+    this->setAutoFillBackground(true);
+    this->setPalette(Pal);
+
+    QPalette pal = ui->button_add->palette();
+    pal.setBrush(QPalette::ButtonText, Qt::white);
+
+    ui->button_add->setPalette(pal);
+    ui->button_add->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_add->update();
+
+    ui->button_approve->setPalette(pal);
+    ui->button_approve->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_approve->update();
+
+    ui->button_discard->setPalette(pal);
+    ui->button_discard->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_discard->update();
+
+    ui->button_remove->setPalette(pal);
+    ui->button_remove->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_remove->update();
+
+    pal.setBrush(QPalette::WindowText, Qt::white);
+    ui->label->setPalette(pal);
+    ui->label_available->setPalette(pal);
+    ui->label_number->setPalette(pal);
+
     number_of_current_product = 0;
     max_number_of_current_product = 0;
     chosed_product= 0;

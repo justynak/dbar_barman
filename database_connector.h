@@ -43,6 +43,7 @@ class database_connector
 
        bool add_bill(bill *b);
        bool remove_bill(QString b);
+       bool close_bill(QString b);
 
        bool update_table(table t);
        bool connect();

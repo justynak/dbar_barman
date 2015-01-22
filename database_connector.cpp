@@ -305,6 +305,18 @@ bool database_connector::remove_bill(QString b)
     return query.exec(command);
 }
 
+bool database_connector::close_bill(QString b)
+{
+    QSqlQuery query;
+
+    int whitespace = b.indexOf('\t');
+    b = b.left(whitespace);
+
+    QString command = QObject::tr("UPDATE d_zamowienie SET zamkniety= '1' "
+                                  "WHERE nr_zamowienia = %1").arg(b);
+    return query.exec(command);
+}
+
 bool database_connector::update_table(table t)
 {
     QSqlQuery query;

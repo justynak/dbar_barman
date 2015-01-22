@@ -25,6 +25,7 @@ public:
 
 public slots:
     void manage_click(int, int);
+    void nope(int, int){}
     void send_bill_print_signal();
     void add_bill();
     void add_product_slot();

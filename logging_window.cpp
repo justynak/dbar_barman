@@ -14,12 +14,15 @@ logging_window::logging_window(QWidget *parent) :
      this->setPalette(Pal);
      QPalette pal = ui->button_waiter->palette();
      pal.setBrush(QPalette::ButtonText, Qt::white);
+
      ui->button_waiter->setPalette(pal);
      ui->button_waiter->setStyleSheet("*{background-color: rgb(70,130,180)}");
      ui->button_waiter->update();
      ui->button_barman->setPalette(pal);
      ui->button_barman->setStyleSheet("*{background-color: rgb(70,130,180)}");
      ui->button_barman->update();
+
+
      pal.setBrush(QPalette::WindowText, Qt::white);
      ui->label_login->setPalette(pal);
 

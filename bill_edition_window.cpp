@@ -20,17 +20,62 @@ bill_edition_window::bill_edition_window(waiter *w_p, bartender *b_r, employee* 
     ui->setupUi(this);
 
     QPalette Pal(palette());
-    // set black background
     Pal.setColor(QPalette::Background, QColor(100, 149, 237));
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
 
+    QPalette pal = ui->button_add_product->palette();
+    pal.setBrush(QPalette::ButtonText, Qt::white);
+
+    ui->button_add_product->setPalette(pal);
+    ui->button_add_product->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_add_product->update();
+
+    ui->button_delete_bill->setPalette(pal);
+    ui->button_delete_bill->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_delete_bill->update();
+
+    ui->button_logging->setPalette(pal);
+    ui->button_logging->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_logging->update();
+
+    ui->button_new_bill->setPalette(pal);
+    ui->button_new_bill->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_new_bill->update();
+
+    ui->button_print_bill->setPalette(pal);
+    ui->button_print_bill->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_print_bill->update();
+
+    ui->button_scan_client_card->setPalette(pal);
+    ui->button_scan_client_card->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_scan_client_card->update();
+
+    ui->button_tables->setPalette(pal);
+    ui->button_tables->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_tables->update();
+
+
+    pal.setBrush(QPalette::WindowText, Qt::white);
+    ui->label->setPalette(pal);
+    ui->label_2->setPalette(pal);
+    ui->label_3->setPalette(pal);
+    ui->label_bill_number->setPalette(pal);
+    ui->label_client_number->setPalette(pal);
+    ui->label_logged_as->setPalette(pal);
+    ui->label_value->setPalette(pal);
+    ui->label_2->setPalette(pal);
+    ui->label_3->setPalette(pal);
+
+
+
     ui->product_list->setRowCount(0);
     ui->product_list->setColumnCount(6);
-    ui->product_list->setColumnWidth(COL_PRODUCT, 300);
-    ui->product_list->setColumnWidth(COL_ADD_ONE, 40);
-    ui->product_list->setColumnWidth(COL_REMOVE_ONE, 40);
-    ui->product_list->setColumnWidth(COL_DELETE, 60);
+    ui->product_list->setColumnWidth(COL_PRODUCT, 352);
+    ui->product_list->setColumnWidth(COL_ADD_ONE, 50);
+    ui->product_list->setColumnWidth(COL_REMOVE_ONE, 50);
+    ui->product_list->setColumnWidth(COL_DELETE, 150);
+
 
     QStringList a;
     a<<"Produkt"<<""<<"Ilość"<<""<<"Cena"<<"Usuń";
@@ -44,7 +89,7 @@ bill_edition_window::bill_edition_window(waiter *w_p, bartender *b_r, employee* 
     connect(ui->button_logging, &QPushButton::clicked, this, &bill_edition_window::goto_logging);
     connect(ui->button_new_bill,&QPushButton::clicked, this, &bill_edition_window::add_bill);
     connect(ui->button_delete_bill, &QPushButton::clicked, this, &bill_edition_window::on_button_delete_bill_clicked);
-
+    connect(ui->product_list, &QTableWidget::cellDoubleClicked, this, &bill_edition_window::nope);
     connect(ui->box_bills, SIGNAL(highlighted(QString)), this, SLOT(update_product_list(QString)));
 
 
@@ -89,7 +134,10 @@ void bill_edition_window::update_product_list(QString index)
     {
         QTableWidgetItem* item[6];
         for(int k=0; k<6; ++k)
+        {
             item[k] = new QTableWidgetItem();
+            item[k]->setFlags(item[k]->flags() ^ Qt::ItemIsEditable);
+        }
 
         ui->product_list->insertRow(i);
         item[COL_PRODUCT]->setText(list_products[i].get_name());
@@ -100,7 +148,9 @@ void bill_edition_window::update_product_list(QString index)
         item[COL_DELETE]->setText(tr("X"));
 
         for(unsigned int j=0; j<6; ++j)
+        {
             ui->product_list->setItem(i, j, item[j]);
+        }
     }
 
     value = 0;
@@ -128,6 +178,7 @@ void bill_edition_window::update_product_number(int p, int number)
         {
             list_products[p].set_number_of_products(newnumber);
             item->setText(tr("%1").arg(newnumber));
+            item->setFlags(item->flags() ^ Qt::ItemIsEditable);
         }
 
         //update the bill cost

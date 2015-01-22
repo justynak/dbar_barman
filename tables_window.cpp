@@ -17,6 +17,22 @@ tables_window::tables_window(QWidget *parent) :
     a.append(tr("Stan"));
     a.append(tr("Oznacz"));
 
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background, QColor(100, 149, 237));
+    this->setAutoFillBackground(true);
+    this->setPalette(Pal);
+
+    QPalette pal = ui->button_ok->palette();
+    pal.setBrush(QPalette::ButtonText, Qt::white);
+
+    ui->button_ok->setPalette(pal);
+    ui->button_ok->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_ok->update();
+
+
+    pal.setBrush(QPalette::WindowText, Qt::white);
+    ui->label->setPalette(pal);
+
     ui->list_tables->setHorizontalHeaderLabels(a);
 
     list.clear();
@@ -27,7 +43,10 @@ tables_window::tables_window(QWidget *parent) :
         ui->list_tables->insertRow(i);
         QTableWidgetItem* item[3];
         for(int k=0; k<3; ++k)
+        {
             item[k] = new QTableWidgetItem();
+            item[k]->setFlags(item[k]->flags() ^ Qt::ItemIsEditable);
+        }
 
             item[0]->setText(tr("%1").arg(list[i].get_number()));
 

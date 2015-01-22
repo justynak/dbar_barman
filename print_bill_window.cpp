@@ -8,10 +8,26 @@ print_bill_window::print_bill_window(QString b, QWidget *parent) :
     ui->setupUi(this);
 
     QPalette Pal(palette());
-    // set black background
     Pal.setColor(QPalette::Background, QColor(100, 149, 237));
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
+
+    QPalette pal = ui->button_ok->palette();
+    pal.setBrush(QPalette::ButtonText, Qt::white);
+
+    ui->button_ok->setPalette(pal);
+    ui->button_ok->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_ok->update();
+
+    ui->button_discard->setPalette(pal);
+    ui->button_discard->setStyleSheet("*{background-color: rgb(70,130,180)}");
+    ui->button_discard->update();
+
+    pal.setBrush(QPalette::WindowText, Qt::white);
+    ui->label->setPalette(pal);
+    ui->label_2->setPalette(pal);
+    ui->label_bill_number->setPalette(pal);
+    ui->label_value->setPalette(pal);
 
     db = database_connector::get_instance();
     product_list.clear();
@@ -24,7 +40,10 @@ print_bill_window::print_bill_window(QString b, QWidget *parent) :
     {
         QTableWidgetItem* item[3];
         for(int k=0; k<3; ++k)
+        {
             item[k] = new QTableWidgetItem();
+            item[k]->setFlags(item[k]->flags() ^ Qt::ItemIsEditable);
+        }
 
         double price = product_list[i].get_price();
         int number = product_list[i].get_number_of_products();
@@ -43,7 +62,7 @@ print_bill_window::print_bill_window(QString b, QWidget *parent) :
     ui->label_bill_number->setText(bill_number);
 
     connect(ui->button_ok, &QPushButton::clicked, this, &print_bill_window::on_button_ok_clicked);
-    connect(ui->button_ok, &QPushButton::clicked, this, &print_bill_window::bill_closed);
+    connect(ui->button_discard, &QPushButton::clicked, this, &print_bill_window::bill_closed);
 }
 
 print_bill_window::~print_bill_window()
@@ -53,7 +72,7 @@ print_bill_window::~print_bill_window()
 
 void print_bill_window::on_button_ok_clicked()
 {
-    db->remove_bill(this->bill_number);
+    db->close_bill(bill_number);
     emit bill_closed();
 }
 

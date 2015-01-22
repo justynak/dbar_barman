@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>803</width>
-    <height>504</height>
+    <width>1366</width>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Gotham Bold</family>
      <pointsize>32</pointsize>
     </font>
    </property>
@@ -42,6 +43,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Gotham Bold</family>
      <pointsize>16</pointsize>
     </font>
    </property>
@@ -60,6 +62,7 @@
    </property>
    <property name="font">
     <font>
+     <family>Gotham Bold</family>
      <pointsize>16</pointsize>
     </font>
    </property>
